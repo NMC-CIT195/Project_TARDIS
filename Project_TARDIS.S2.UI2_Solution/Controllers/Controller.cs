@@ -88,7 +88,7 @@ namespace Project_TARDIS
                 //
                 // get a menu choice from the ConsoleView object
                 //
-                travelerActionChoice = _gameConsoleView.DisplayGetTravelerActionChoice();
+                travelerActionChoice = _gameConsoleView.DisplayGamePlayScreen();
 
                 //
                 // choose an action based on the user's menu choice
@@ -102,9 +102,6 @@ namespace Project_TARDIS
                         break;
                     case TravelerAction.LookAt:
                         _gameConsoleView.DisplayLookAt();
-                        break;
-                    case TravelerAction.TalkTo:
-                        _gameConsoleView.DisplayTalkTo();
                         break;
                     case TravelerAction.PickUpItem:
                         itemID = _gameConsoleView.DisplayPickUpItem();
@@ -132,12 +129,7 @@ namespace Project_TARDIS
                         _gameTraveler.TravelersItems.Remove(itemToPutDown);
                         break;
                     case TravelerAction.PutDownTreasure:
-                        treasureID = _gameConsoleView.DisplayPutDownTreasure();
 
-                        Treasure treasureToPutDown = _gameUniverse.GetTreasureByID(treasureID);
-
-                        treasureToPutDown.SpaceTimeLocationID = _gameTraveler.SpaceTimeLocationID;
-                        _gameTraveler.TravelersTreasures.Remove(treasureToPutDown);
                         break;
                     case TravelerAction.Travel:
                         _gameTraveler.SpaceTimeLocationID = _gameConsoleView.DisplayGetTravelersNewDestination().SpaceTimeLocationID;

@@ -382,6 +382,26 @@ namespace Project_TARDIS
         }
 
         /// <summary>
+        /// generate a table of item names and ids
+        /// </summary>
+        public void DisplayDalekTable(List<Dalek> daleks)
+        {
+            //
+            // table headings
+            //
+            ConsoleUtil.DisplayMessage("ID".PadRight(10) + "Name".PadRight(20));
+            ConsoleUtil.DisplayMessage("---".PadRight(10) + "-------------".PadRight(20));
+
+            //
+            // item name and id
+            //
+            foreach (Dalek dalek in daleks)
+            {
+                ConsoleUtil.DisplayMessage(dalek.CharacterID.ToString().PadRight(10) + dalek.Name.PadRight(20));
+            }
+        }
+
+        /// <summary>
         /// get the action choice from the user
         /// </summary>
         public TravelerAction DisplayGetTravelerActionChoice()
@@ -409,25 +429,26 @@ namespace Project_TARDIS
                     "\t" + "**************************" + Environment.NewLine +
                     "\t" + "A. Look Around" + Environment.NewLine +
                     "\t" + "B. Look At" + Environment.NewLine +
-                    "\t" + "C. Pick Up Item" + Environment.NewLine +
-                    "\t" + "D. Pick Up Treasure" + Environment.NewLine +
-                    "\t" + "E. Put Down Item" + Environment.NewLine +
-                    "\t" + "F. Put Down Treasure" + Environment.NewLine +
-                    "\t" + "G. Travel" + Environment.NewLine +
+                    "\t" + "C. Talk To" + Environment.NewLine +
+                    "\t" + "D. Pick Up Item" + Environment.NewLine +
+                    "\t" + "E. Pick Up Treasure" + Environment.NewLine +
+                    "\t" + "F. Put Down Item" + Environment.NewLine +
+                    "\t" + "G. Put Down Treasure" + Environment.NewLine +
+                    "\t" + "H. Travel" + Environment.NewLine +
                     "\t" + Environment.NewLine +
                     "\t" + "**************************" + Environment.NewLine +
                     "\t" + "Traveler Information" + Environment.NewLine +
                     "\t" + "**************************" + Environment.NewLine +
-                    "\t" + "H. Display General Traveler Info" + Environment.NewLine +
-                    "\t" + "I. Display Traveler Inventory" + Environment.NewLine +
-                    "\t" + "J. Display Traveler Treasure" + Environment.NewLine +
+                    "\t" + "I. Display General Traveler Info" + Environment.NewLine +
+                    "\t" + "J. Display Traveler Inventory" + Environment.NewLine +
+                    "\t" + "K. Display Traveler Treasure" + Environment.NewLine +
                     "\t" + Environment.NewLine +
                     "\t" + "**************************" + Environment.NewLine +
                     "\t" + "Game Information" + Environment.NewLine +
                     "\t" + "**************************" + Environment.NewLine +
-                    "\t" + "K. Display All TARDIS Destinations" + Environment.NewLine +
-                    "\t" + "L. Display All Game Items" + Environment.NewLine +
-                    "\t" + "M. Display All Game Treasures" + Environment.NewLine +
+                    "\t" + "L. Display All TARDIS Destinations" + Environment.NewLine +
+                    "\t" + "M. Display All Game Items" + Environment.NewLine +
+                    "\t" + "N. Display All Game Treasures" + Environment.NewLine +
                     "\t" + Environment.NewLine +
                     "\t" + "**************************" + Environment.NewLine +
                     "\t" + "Q. Quit" + Environment.NewLine);
@@ -451,56 +472,61 @@ namespace Project_TARDIS
                         break;
                     case 'C':
                     case 'c':
-                        travelerActionChoice = TravelerAction.PickUpItem;
+                        travelerActionChoice = TravelerAction.TalkTo;
                         usingMenu = false;
                         break;
                     case 'D':
                     case 'd':
-                        travelerActionChoice = TravelerAction.PickUpTreasure;
+                        travelerActionChoice = TravelerAction.PickUpItem;
                         usingMenu = false;
                         break;
                     case 'E':
                     case 'e':
-                        travelerActionChoice = TravelerAction.PutDownItem;
+                        travelerActionChoice = TravelerAction.PickUpTreasure;
                         usingMenu = false;
                         break;
                     case 'F':
                     case 'f':
-                        travelerActionChoice = TravelerAction.PutDownTreasure;
+                        travelerActionChoice = TravelerAction.PutDownItem;
                         usingMenu = false;
                         break;
                     case 'G':
                     case 'g':
-                        travelerActionChoice = TravelerAction.Travel;
+                        travelerActionChoice = TravelerAction.PutDownTreasure;
                         usingMenu = false;
                         break;
                     case 'H':
                     case 'h':
-                        travelerActionChoice = TravelerAction.TravelerInfo;
+                        travelerActionChoice = TravelerAction.Travel;
                         usingMenu = false;
                         break;
                     case 'I':
                     case 'i':
-                        travelerActionChoice = TravelerAction.TravelerInventory;
+                        travelerActionChoice = TravelerAction.TravelerInfo;
                         usingMenu = false;
                         break;
                     case 'J':
                     case 'j':
-                        travelerActionChoice = TravelerAction.TravelerTreasure;
+                        travelerActionChoice = TravelerAction.TravelerInventory;
                         usingMenu = false;
                         break;
                     case 'K':
                     case 'k':
-                        travelerActionChoice = TravelerAction.ListTARDISDestinations;
+                        travelerActionChoice = TravelerAction.TravelerTreasure;
                         usingMenu = false;
                         break;
                     case 'L':
                     case 'l':
-                        travelerActionChoice = TravelerAction.ListItems;
+                        travelerActionChoice = TravelerAction.ListTARDISDestinations;
                         usingMenu = false;
                         break;
                     case 'M':
                     case 'm':
+                        travelerActionChoice = TravelerAction.ListItems;
+                        usingMenu = false;
+                        break;
+                    case 'n':
+                    case 'N':
                         travelerActionChoice = TravelerAction.ListTreasures;
                         usingMenu = false;
                         break;
@@ -549,6 +575,13 @@ namespace Project_TARDIS
             foreach (Treasure treasure in _gameUniverse.GetTreasuresBySpaceTimeLocationID(_gameTraveler.SpaceTimeLocationID))
             {
                 ConsoleUtil.DisplayMessage(treasure.Name + " - " + treasure.Description);
+            }
+
+            ConsoleUtil.DisplayMessage("");
+            ConsoleUtil.DisplayMessage("Daleks in current location.");
+            foreach (Dalek dalek in _gameUniverse.GetDaleksBySpaceTimeLocationID(_gameTraveler.SpaceTimeLocationID))
+            {
+                ConsoleUtil.DisplayMessage(dalek.Name);
             }
 
             DisplayContinuePrompt();
@@ -608,6 +641,52 @@ namespace Project_TARDIS
                 {
                     treasureToLookAt = _gameUniverse.GetTreasureByID(treasureIDChoice);
                     ConsoleUtil.DisplayMessage(treasureToLookAt.Description);
+
+                    DisplayContinuePrompt();
+                }
+            }
+        }
+
+        /// <summary>
+        /// display information about items and treasures in the current space-time location
+        /// </summary>
+        public void DisplayTalkTo()
+        {
+            int currentSptID = _gameTraveler.SpaceTimeLocationID;
+            int dalekIDChoice;
+            List<Dalek> dalecksInSpt = new List<Dalek>();
+            Dalek dalekToTalkTo = new Dalek();
+
+            dalecksInSpt = _gameUniverse.GetDaleksBySpaceTimeLocationID(currentSptID);
+
+            ConsoleUtil.HeaderText = "Talk to the Daleks in Current Location";
+            ConsoleUtil.DisplayReset();
+
+            ConsoleUtil.DisplayMessage(_gameUniverse.GetSpaceTimeLocationByID(currentSptID).Name);
+
+            if (dalecksInSpt != null)
+            {
+                ConsoleUtil.DisplayMessage("");
+                ConsoleUtil.DisplayMessage("Daleks in current location.");
+                DisplayDalekTable(dalecksInSpt);
+
+                ConsoleUtil.DisplayPromptMessage(
+                    "Enter the item number to view or press the Enter key to move on. "
+                    ); // TODO code in validation
+
+
+                if (int.TryParse(Console.ReadLine(), out dalekIDChoice))
+                {
+                    dalekToTalkTo = _gameUniverse.GetDalekByID(dalekIDChoice);
+
+                    if (dalekToTalkTo.HasMessage)
+                    {
+                        ConsoleUtil.DisplayMessage(dalekToTalkTo.Message);
+                    }
+                    else
+                    {
+                        ConsoleUtil.DisplayMessage($"This Dalek has nothing to say {_gameTraveler.Race}.");
+                    }
 
                     DisplayContinuePrompt();
                 }
@@ -816,7 +895,7 @@ namespace Project_TARDIS
             itemsInInventory = _gameTraveler.TravelersItems;
 
             ConsoleUtil.DisplayMessage("");
-            ConsoleUtil.DisplayMessage("Items in current Location");
+            ConsoleUtil.DisplayMessage("Items in Your Inventory");
             ConsoleUtil.DisplayMessage("");
 
             DisplayItemTable(itemsInInventory);
@@ -874,14 +953,14 @@ namespace Project_TARDIS
             int locationID;
             locationID = _gameTraveler.SpaceTimeLocationID;
 
-            List<Treasure> treasuresInCurrentLocation = new List<Treasure>();
-            treasuresInCurrentLocation = _gameUniverse.GetTreasuresBySpaceTimeLocationID(locationID);
+            List<Treasure> treasuresInInventory = new List<Treasure>();
+            treasuresInInventory = _gameTraveler.TravelersTreasures;
 
             ConsoleUtil.DisplayMessage("");
-            ConsoleUtil.DisplayMessage("Items in current Location");
+            ConsoleUtil.DisplayMessage("Treasures in Your Inventory");
             ConsoleUtil.DisplayMessage("");
 
-            DisplayTreasureTable(treasuresInCurrentLocation);
+            DisplayTreasureTable(treasuresInInventory);
 
             ConsoleUtil.DisplayPromptMessage("Enter Treasure Number:");
             treasureID = int.Parse(Console.ReadLine()); // TODO validate ID

@@ -18,8 +18,7 @@ namespace Project_TARDIS
             None,
             Human,
             Thorian,
-            Xantorian,
-            Dalek
+            Xantorian
         }
 
         #endregion
@@ -29,7 +28,6 @@ namespace Project_TARDIS
         private string _name;
         private int _spaceTimeLocationID;
         private RaceType _race;
-        private int _characterID;
 
         #endregion
 
@@ -52,12 +50,6 @@ namespace Project_TARDIS
         {
             get { return _race; }
             set { _race = value; }
-        }
-
-        public int CharacterID
-        {
-            get { return _characterID; }
-            set { _characterID = value; }
         }
 
         #endregion

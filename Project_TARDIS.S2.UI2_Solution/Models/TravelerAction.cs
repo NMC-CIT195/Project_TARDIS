@@ -6,7 +6,6 @@
         MissionSetup,
         LookAround,
         LookAt,
-        TalkTo,
         PickUpItem,
         PickUpTreasure,
         PutDownItem,

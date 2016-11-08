@@ -29,11 +29,6 @@ namespace Project_TARDIS
         //
         public List<Treasure> Treasures { get; set; }
 
-        //
-        // list of all daleks
-        //
-        public List<Dalek> Daleks { get; set; }
-
         #endregion
 
         #region ***** constructor *****
@@ -49,7 +44,6 @@ namespace Project_TARDIS
             this.SpaceTimeLocations = new List<SpaceTimeLocation>();
             this.Items = new List<Item>();
             this.Treasures = new List<Treasure>();
-            this.Daleks = new List<Dalek>();
 
             //
             // add all of the space-time locations and game objects to their lists
@@ -57,7 +51,6 @@ namespace Project_TARDIS
             IntializeUniverseSpaceTimeLocations();
             IntializeUniverseItems();
             IntializeUniverseTreasures();
-            IntializeUniverseDaleks();
         }
 
         #endregion
@@ -224,39 +217,6 @@ namespace Project_TARDIS
             return requestedTreasure;
         }
 
-        /// <summary>
-        /// get a dalek using an ID
-        /// </summary>
-        /// <param name="ID">character ID</param>
-        /// <returns>requested dalek object</returns>
-        public Dalek GetDalekByID(int ID)
-        {
-            Dalek requestedDalek = null;
-
-            //
-            // run through the item list and grab the correct one
-            //
-            foreach (Dalek dalek in Daleks)
-            {
-                if (dalek.CharacterID == ID)
-                {
-                    requestedDalek = dalek;
-                };
-            }
-
-            //
-            // the specified ID was not found in the universe
-            // throw and exception
-            //
-            if (requestedDalek == null)
-            {
-                string feedbackMessage = $"The dalek ID {ID} does not exist in the current Universe.";
-                throw new ArgumentException(ID.ToString(), feedbackMessage);
-            }
-
-            return requestedDalek;
-        }
-
         #endregion
 
         #region ***** define methods to get lists of game elements by location *****
@@ -310,31 +270,6 @@ namespace Project_TARDIS
             }
 
             return treasuresInSpaceTimeLocation;
-        }
-
-        /// get a list of daleks using a space-time location ID
-        /// </summary>
-        /// <param name="ID">space-time location ID</param>
-        /// <returns>list of daleks in the specified location</returns>
-        public List<Dalek> GetDaleksBySpaceTimeLocationID(int ID)
-        {
-            // TODO validate SpaceTimeLocationID
-
-            List<Dalek> daleksInSpaceTimeLocation = new List<Dalek>();
-
-            //
-            // run through the dalek list and put all daleks in the current location
-            // into a list
-            //
-            foreach (Dalek dalek in Daleks)
-            {
-                if (dalek.SpaceTimeLocationID == ID)
-                {
-                    daleksInSpaceTimeLocation.Add(dalek);
-                }
-            }
-
-            return daleksInSpaceTimeLocation;
         }
 
         #endregion
@@ -442,33 +377,6 @@ namespace Project_TARDIS
                 HasValue = true,
                 Value = 15,
                 CanAddToInventory = true
-            });
-        }
-
-        /// <summary>
-        /// initialize the universe with all of the treasures
-        /// </summary>
-        private void IntializeUniverseDaleks()
-        {
-            Daleks.Add(new Dalek
-            {
-                Name = "Thordan",
-                CharacterID = 1,
-                Race = Character.RaceType.Dalek,
-                SpaceTimeLocationID = 2,
-                HasMessage = true,
-                Message = "You must leave the Lodestone in the Felandrian Plains."
-
-            });
-
-            Daleks.Add(new Dalek
-            {
-                Name = "Rolan",
-                CharacterID = 2,
-                Race = Character.RaceType.Dalek,
-                SpaceTimeLocationID = 2,
-                HasMessage = false,
-                Message = ""
             });
         }
 

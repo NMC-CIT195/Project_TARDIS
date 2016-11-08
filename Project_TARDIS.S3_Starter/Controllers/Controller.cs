@@ -129,7 +129,12 @@ namespace Project_TARDIS
                         _gameTraveler.TravelersItems.Remove(itemToPutDown);
                         break;
                     case TravelerAction.PutDownTreasure:
+                        treasureID = _gameConsoleView.DisplayPutDownTreasure();
 
+                        Treasure treasureToPutDown = _gameUniverse.GetTreasureByID(treasureID);
+
+                        treasureToPutDown.SpaceTimeLocationID = _gameTraveler.SpaceTimeLocationID;
+                        _gameTraveler.TravelersTreasures.Remove(treasureToPutDown);
                         break;
                     case TravelerAction.Travel:
                         _gameTraveler.SpaceTimeLocationID = _gameConsoleView.DisplayGetTravelersNewDestination().SpaceTimeLocationID;

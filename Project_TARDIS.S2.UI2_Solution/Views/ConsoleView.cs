@@ -532,23 +532,20 @@ namespace Project_TARDIS
         /// </summary>
         public void DisplayLookAround()
         {
-            ConsoleUtil.HeaderText = "Current Space-Time Location Info";
-            ConsoleUtil.DisplayReset();
+            DisplayGamePlayScreenMessageBoxHeader(5, 5, 120, "Items in current location.");
 
-            ConsoleUtil.DisplayMessage(_gameUniverse.GetSpaceTimeLocationByID(_gameTraveler.SpaceTimeLocationID).Description);
+            ConsoleUtil.DisplayMessageBoxMessage(_gameUniverse.GetSpaceTimeLocationByID(_gameTraveler.SpaceTimeLocationID).Description);
 
-            ConsoleUtil.DisplayMessage("");
-            ConsoleUtil.DisplayMessage("Items in current location.");
             foreach (Item item in _gameUniverse.GetItemtsBySpaceTimeLocationID(_gameTraveler.SpaceTimeLocationID))
             {
-                ConsoleUtil.DisplayMessage(item.Name + " - " + item.Description);
+                ConsoleUtil.DisplayMessageBoxMessage(item.Name + " - " + item.Description);
             }
 
             ConsoleUtil.DisplayMessage("");
-            ConsoleUtil.DisplayMessage("Treasures in current location.");
+            ConsoleUtil.DisplayMessageBoxMessage("Treasures in current location.");
             foreach (Treasure treasure in _gameUniverse.GetTreasuresBySpaceTimeLocationID(_gameTraveler.SpaceTimeLocationID))
             {
-                ConsoleUtil.DisplayMessage(treasure.Name + " - " + treasure.Description);
+                ConsoleUtil.DisplayMessageBoxMessage(treasure.Name + " - " + treasure.Description);
             }
 
             DisplayContinuePrompt();
@@ -816,7 +813,7 @@ namespace Project_TARDIS
             itemsInInventory = _gameTraveler.TravelersItems;
 
             ConsoleUtil.DisplayMessage("");
-            ConsoleUtil.DisplayMessage("Items in Your Inventory");
+            ConsoleUtil.DisplayMessage("Items in current Location");
             ConsoleUtil.DisplayMessage("");
 
             DisplayItemTable(itemsInInventory);
@@ -874,14 +871,14 @@ namespace Project_TARDIS
             int locationID;
             locationID = _gameTraveler.SpaceTimeLocationID;
 
-            List<Treasure> treasuresInInventory = new List<Treasure>();
-            treasuresInInventory = _gameTraveler.TravelersTreasures;
+            List<Treasure> treasuresInCurrentLocation = new List<Treasure>();
+            treasuresInCurrentLocation = _gameUniverse.GetTreasuresBySpaceTimeLocationID(locationID);
 
             ConsoleUtil.DisplayMessage("");
-            ConsoleUtil.DisplayMessage("Treasures in Your Inventory");
+            ConsoleUtil.DisplayMessage("Items in current Location");
             ConsoleUtil.DisplayMessage("");
 
-            DisplayTreasureTable(treasuresInInventory);
+            DisplayTreasureTable(treasuresInCurrentLocation);
 
             ConsoleUtil.DisplayPromptMessage("Enter Treasure Number:");
             treasureID = int.Parse(Console.ReadLine()); // TODO validate ID
@@ -890,6 +887,216 @@ namespace Project_TARDIS
 
             return treasureID;
         }
+
+        public TravelerAction DisplayGamePlayScreen()
+        {
+            TravelerAction travelerActionChoice = TravelerAction.None;
+
+            Console.Clear();
+            Console.WriteLine();
+            Console.WriteLine(ConsoleUtil.Center("The TARDIS Project"));
+
+            DisplayGamePlayScreenMenu();
+
+            DisplayGamePlayScreenMessageBoxOutline(2, 5, 110, 15);
+
+            travelerActionChoice = GetTravelerActionChoice();
+
+            return travelerActionChoice;
+        }
+
+
+        /// <summary>
+        /// display the player menu options
+        /// </summary>
+        public void DisplayGamePlayScreenMenu()
+        {
+            int topRow = 2;
+            char menuLetter = 'A';
+
+            List<string> menuItems = new List<string>();
+
+            menuItems = Enum.GetNames(typeof(TravelerAction)).ToList();
+            menuItems.Remove("None");
+            menuItems.Remove("MissionSetup");
+
+            foreach (string menuChoice in menuItems)
+            {
+                Console.SetCursorPosition(120, topRow++);
+                Console.Write($"{menuLetter++}. {menuChoice}");
+            }
+        }
+
+        public void DisplayGamePlayScreenMessageBoxHeader(int topLeftRow, int topLeftColumn, int width, string headerText)
+        {
+            Console.SetCursorPosition((width / 2) + 5, 7);
+            Console.Write(headerText);
+        }
+
+        public void DisplayGamePlayScreenMessageBoxOutline(int topLeftRow, int topLeftColumn, int width, int height)
+        {
+            string topLeftCorner = "\u2554";
+            string topRightCorner = "\u2557";
+            string bottomLeftCorner = "\u255A";
+            string bottomRightCorner = "\u255D";
+            string horizontal = "\u2550";
+            string vertical = "\u2551";
+
+            Console.SetCursorPosition(topLeftColumn, topLeftRow);
+
+            for (int row = 0; row < height; row++)
+            {
+                for (int column = 0; column < width; column++)
+                {
+                    Console.SetCursorPosition(topLeftColumn + column, topLeftRow + row);
+
+                    // displaying top row
+                    if (row == 0)
+                    {
+                        if (column == 0)
+                        {
+                            Console.Write(topLeftCorner);
+                        }
+                        else if (column == width - 1)
+                        {
+                            Console.Write(topRightCorner);
+                        }
+                        else
+                        {
+                            Console.WriteLine(horizontal);
+                        }
+                    }
+                    // displaying bottom row
+                    else if (row == height - 1)
+                    {
+                        if (column == 0)
+                        {
+                            Console.Write(bottomLeftCorner);
+                        }
+                        else if (column == width - 1)
+                        {
+                            Console.Write(bottomRightCorner);
+                        }
+                        else
+                        {
+                            Console.WriteLine(horizontal);
+                        }
+                    }
+                    // displaying middle row
+                    else
+                    {
+                        if (column == 0 || column == width - 1)
+                        {
+                            Console.Write(vertical);
+                        }
+                    }
+                }
+            }
+        }
+
+        public TravelerAction GetTravelerActionChoice()
+        {
+            TravelerAction travelerActionChoice = TravelerAction.None;
+            bool usingMenu = true;
+
+            while (usingMenu)
+            {
+                Console.CursorVisible = false;
+                //
+                // get and process the user's response
+                // note: ReadKey argument set to "true" disables the echoing of the key press
+                //
+                ConsoleKeyInfo userResponse = Console.ReadKey(true);
+                switch (userResponse.KeyChar)
+                {
+                    case 'A':
+                    case 'a':
+                        travelerActionChoice = TravelerAction.LookAround;
+                        usingMenu = false;
+                        break;
+                    case 'B':
+                    case 'b':
+                        travelerActionChoice = TravelerAction.LookAt;
+                        usingMenu = false;
+                        break;
+                    case 'C':
+                    case 'c':
+                        travelerActionChoice = TravelerAction.PickUpItem;
+                        usingMenu = false;
+                        break;
+                    case 'D':
+                    case 'd':
+                        travelerActionChoice = TravelerAction.PickUpTreasure;
+                        usingMenu = false;
+                        break;
+                    case 'E':
+                    case 'e':
+                        travelerActionChoice = TravelerAction.PutDownItem;
+                        usingMenu = false;
+                        break;
+                    case 'F':
+                    case 'f':
+                        travelerActionChoice = TravelerAction.PutDownTreasure;
+                        usingMenu = false;
+                        break;
+                    case 'G':
+                    case 'g':
+                        travelerActionChoice = TravelerAction.Travel;
+                        usingMenu = false;
+                        break;
+                    case 'H':
+                    case 'h':
+                        travelerActionChoice = TravelerAction.TravelerInfo;
+                        usingMenu = false;
+                        break;
+                    case 'I':
+                    case 'i':
+                        travelerActionChoice = TravelerAction.TravelerInventory;
+                        usingMenu = false;
+                        break;
+                    case 'J':
+                    case 'j':
+                        travelerActionChoice = TravelerAction.TravelerTreasure;
+                        usingMenu = false;
+                        break;
+                    case 'K':
+                    case 'k':
+                        travelerActionChoice = TravelerAction.ListTARDISDestinations;
+                        usingMenu = false;
+                        break;
+                    case 'L':
+                    case 'l':
+                        travelerActionChoice = TravelerAction.ListItems;
+                        usingMenu = false;
+                        break;
+                    case 'M':
+                    case 'm':
+                        travelerActionChoice = TravelerAction.ListTreasures;
+                        usingMenu = false;
+                        break;
+                    case 'N':
+                    case 'n':
+                        travelerActionChoice = TravelerAction.Exit;
+                        usingMenu = false;
+                        break;
+                    default:
+                        Console.WriteLine(
+                            "It appears you have selected an incorrect choice." + Environment.NewLine +
+                            "Press any key to continue or the ESC key to quit the application.");
+
+                        userResponse = Console.ReadKey(true);
+                        if (userResponse.Key == ConsoleKey.Escape)
+                        {
+                            usingMenu = false;
+                        }
+                        break;
+                }
+            }
+            Console.CursorVisible = true;
+
+            return travelerActionChoice;
+        }
+
         #endregion
     }
 }
