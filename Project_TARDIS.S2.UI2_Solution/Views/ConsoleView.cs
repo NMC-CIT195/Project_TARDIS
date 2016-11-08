@@ -110,6 +110,8 @@ namespace Project_TARDIS
             sb.AppendFormat("in its latest endeavor, the TARDIS Project. Your mission is to ");
             sb.AppendFormat("test the limits of the new TARDIS Machine and report back to ");
             sb.AppendFormat("the Norlon Corporation.");
+            sb.AppendFormat(Environment.NewLine);
+            sb.AppendFormat("Your mission begins now.");
             ConsoleUtil.DisplayMessage(sb.ToString());
             Console.WriteLine();
 
@@ -532,21 +534,29 @@ namespace Project_TARDIS
         /// </summary>
         public void DisplayLookAround()
         {
-            DisplayGamePlayScreenMessageBoxHeader(5, 5, 120, "Items in current location.");
+            StringBuilder messageBoxMessage = new StringBuilder();
+            messageBoxMessage.Clear();
 
-            ConsoleUtil.DisplayMessageBoxMessage(_gameUniverse.GetSpaceTimeLocationByID(_gameTraveler.SpaceTimeLocationID).Description);
+            messageBoxMessage.AppendFormat(_gameUniverse.GetSpaceTimeLocationByID(_gameTraveler.SpaceTimeLocationID).Description);
 
+            messageBoxMessage.AppendFormat("");
+
+            messageBoxMessage.AppendFormat("Items in current location.");
             foreach (Item item in _gameUniverse.GetItemtsBySpaceTimeLocationID(_gameTraveler.SpaceTimeLocationID))
             {
-                ConsoleUtil.DisplayMessageBoxMessage(item.Name + " - " + item.Description);
+                messageBoxMessage.AppendFormat(item.Name + " - " + item.Description);
             }
 
-            ConsoleUtil.DisplayMessage("");
-            ConsoleUtil.DisplayMessageBoxMessage("Treasures in current location.");
+            messageBoxMessage.Append(Environment.NewLine);
+
+            messageBoxMessage.AppendFormat("Treasures in current location.");
             foreach (Treasure treasure in _gameUniverse.GetTreasuresBySpaceTimeLocationID(_gameTraveler.SpaceTimeLocationID))
             {
-                ConsoleUtil.DisplayMessageBoxMessage(treasure.Name + " - " + treasure.Description);
+                messageBoxMessage.AppendFormat(treasure.Name + " - " + treasure.Description);
             }
+
+
+            ConsoleUtil.DisplayMessageBoxMessage(messageBoxMessage.ToString());
 
             DisplayContinuePrompt();
         }
