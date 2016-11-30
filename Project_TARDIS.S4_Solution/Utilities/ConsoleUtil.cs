@@ -14,11 +14,8 @@ namespace Project_TARDIS
     {
         #region FIELDS
 
-        private static int _windowWidth = 150;
+        private static int _windowWidth = 79;
         private static int _windowHeight = 35;
-
-        private static int _messageBoxHeight = 25;
-        private static int _messageBoxWidth = 110;
 
         private static int _windowLeft = 20;
         private static int _windowTop = 20;
@@ -50,7 +47,7 @@ namespace Project_TARDIS
             get { return _windowHeight; }
             set { _windowHeight = value; }
         }
-
+        
         public static int WindowLeft
         {
             get { return _windowLeft; }
@@ -68,7 +65,7 @@ namespace Project_TARDIS
             get { return _headerText; }
             set { _headerText = value; }
         }
-
+        
         public static ConsoleColor HeaderBackgroundColor
         {
             get { return _headerBackgroundColor = ConsoleColor.White; }
@@ -92,7 +89,7 @@ namespace Project_TARDIS
             get { return _bodyForegroundColor = ConsoleColor.Red; }
             set { _bodyForegroundColor = value; }
         }
-
+        
         public static string WindowTitle
         {
             get { return _windowTitle; }
@@ -130,46 +127,6 @@ namespace Project_TARDIS
 
             Console.WriteLine();
         }
-
-        /// <summary>
-        /// display a message in the message area with a new line
-        /// </summary>
-        /// <param name="message">string to display</param>
-        public static void DisplayMessageBoxMessage(string message)
-        {
-            //
-            // calculate the message area location on the console window
-            //
-            int messageBoxTextLength = _messageBoxWidth - (2 * _displayHorizontalMargin);
-            int messageBoxHorizontalMargin = _displayHorizontalMargin;
-
-            // message is not an empty line, display text
-            if (message != "")
-            {
-                //
-                // create a list of strings to hold the wrapped text message
-                //
-                List<string> messageLines;
-
-                //
-                // call utility method to wrap text and loop through list of strings to display
-                //
-                messageLines = WriteLineWordWrap(message, messageBoxTextLength, messageBoxHorizontalMargin);
-
-                int row = 5;
-                foreach (var messageLine in messageLines)
-                {
-                    Console.SetCursorPosition(6, row++);
-                    Console.Write(messageLine);
-                }
-            }
-            // display an empty line
-            else
-            {
-                Console.WriteLine();
-            }
-        }
-
 
         /// <summary>
         /// display a message in the message area with a new line
@@ -315,48 +272,6 @@ namespace Project_TARDIS
             //newStr = Regex.Replace(newStr, "(?<=[A-Za-z])(?=[^A-Za-z])", " ");
 
             return newStr;
-        }
-
-        public static List<string> WriteLineWordWrap(string text, int rightMargin, int leftMargin)
-        {
-            var lines = new List<string>();
-
-            string leftMarginSpaces = "";
-            for (int i = 0; i < leftMargin; i++)
-            {
-                leftMarginSpaces += " ";
-            }
-
-            string[] paragraphs = Regex.Split(text, "\n");
-
-            foreach (string paragraph in paragraphs)
-            {
-                int start = 0, end;
-
-                //
-                // removes formatting characters
-                //
-                text = Regex.Replace(text, @"\s", " ").Trim();
-
-                while ((end = start + rightMargin) < paragraph.Length)
-                {
-                    while (paragraph[end] != ' ' && end > start)
-                        end -= 1;
-
-                    if (end == start)
-                        end = start + rightMargin;
-
-                    string textLine = paragraph.Substring(start, end - start);
-
-                    lines.Add(leftMarginSpaces + textLine);
-                    start = end + 1;
-                }
-
-                if (start < paragraphs.Length)
-                    lines.Add(leftMarginSpaces + paragraph.Substring(start));
-            }
-
-            return lines;
         }
     }
 }

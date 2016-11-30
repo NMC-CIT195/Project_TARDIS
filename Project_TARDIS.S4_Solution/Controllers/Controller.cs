@@ -27,7 +27,7 @@ namespace Project_TARDIS
 
 
         #endregion
-        
+
         #region CONSTRUCTORS
 
         public Controller()
@@ -51,7 +51,7 @@ namespace Project_TARDIS
         }
 
         #endregion
-        
+
         #region METHODS
 
         /// <summary>
@@ -63,7 +63,6 @@ namespace Project_TARDIS
             _gameUniverse = new Universe();
             _gameTraveler = new Traveler();
             _gameConsoleView = new ConsoleView(_gameTraveler, _gameUniverse);
-
         }
 
         /// <summary>
@@ -77,8 +76,6 @@ namespace Project_TARDIS
 
             InitializeMission();
 
-            Console.Clear();
-
             //
             // game loop
             //
@@ -86,11 +83,16 @@ namespace Project_TARDIS
             {
                 int itemID;
                 int treasureID;
-                 
+
+                //
+                // update game status elements
+                //
+                UpdateGameStatus();
+
                 //
                 // get a menu choice from the ConsoleView object
                 //
-                travelerActionChoice = _gameConsoleView.DisplayGamePlayScreen();
+                travelerActionChoice = _gameConsoleView.DisplayGetTravelerActionChoice();
 
                 //
                 // choose an action based on the user's menu choice
@@ -104,6 +106,9 @@ namespace Project_TARDIS
                         break;
                     case TravelerAction.LookAt:
                         _gameConsoleView.DisplayLookAt();
+                        break;
+                    case TravelerAction.TalkTo:
+                        _gameConsoleView.DisplayTalkTo();
                         break;
                     case TravelerAction.PickUpItem:
                         itemID = _gameConsoleView.DisplayPickUpItem();
@@ -121,6 +126,7 @@ namespace Project_TARDIS
                         treasureToPickup.SpaceTimeLocationID = 0;
                         _gameTraveler.TravelersTreasures.Add(treasureToPickup);
                         break;
+                        break;
                     case TravelerAction.PutDownItem:
                         itemID = _gameConsoleView.DisplayPutDownItem();
 
@@ -130,10 +136,18 @@ namespace Project_TARDIS
                         _gameTraveler.TravelersItems.Remove(itemToPutDown);
                         break;
                     case TravelerAction.PutDownTreasure:
+                        treasureID = _gameConsoleView.DisplayPutDownTreasure();
 
+                        Treasure treasureToPutDown = _gameUniverse.GetTreasureByID(treasureID);
+
+                        treasureToPutDown.SpaceTimeLocationID = _gameTraveler.SpaceTimeLocationID;
+                        _gameTraveler.TravelersTreasures.Remove(treasureToPutDown);
                         break;
                     case TravelerAction.Travel:
                         _gameTraveler.SpaceTimeLocationID = _gameConsoleView.DisplayGetTravelersNewDestination().SpaceTimeLocationID;
+                        break;
+                    case TravelerAction.Battle:
+                        _gameConsoleView.DisplayBattleResults(Battle());
                         break;
                     case TravelerAction.TravelerInfo:
                         _gameConsoleView.DisplayTravelerInfo();
@@ -179,6 +193,13 @@ namespace Project_TARDIS
             _gameTraveler.Race = _gameConsoleView.DisplayGetTravelersRace();
             _gameTraveler.SpaceTimeLocationID = _gameConsoleView.DisplayGetTravelersNewDestination().SpaceTimeLocationID;
 
+            //
+            // set the traveler's initial status
+            //
+            _gameTraveler.BattleIndex = 75;
+            _gameTraveler.Health = 100;
+            _gameTraveler.Lives = 1;
+
             // 
             // add initial items to the traveler's inventory
             //
@@ -212,6 +233,95 @@ namespace Project_TARDIS
             item.SpaceTimeLocationID = 0;
 
             _gameTraveler.TravelersTreasures.Add(item);
+        }
+
+        private void UpdateGameStatus()
+        {
+            //
+            // check for out of lives
+            //
+            if (_gameTraveler.NoLives())
+            {
+                _gameConsoleView.DisplayExitPrompt();
+            }
+        }
+
+        /// <summary>
+        /// get BattleAction choice from the Dalek and the Traveler
+        /// calculate the BattleResult based on the BattleActions and 
+        /// return it
+        /// </summary>
+        /// <returns>Battle Result</returns>
+        private BattleResult Battle()
+        {
+            BattleResult battleResult = BattleResult.None;
+            Dalek daleckToBattle;
+            BattleAction travelerBattleActionChoice;
+            BattleAction dalekBattleActionChoice;
+            Random random = new Random();
+
+            daleckToBattle = _gameConsoleView.DisplayGetDalekToBattle();
+
+            if (daleckToBattle != null)
+            {
+                travelerBattleActionChoice = _gameConsoleView.DisplayGetBattleActionChoice();
+                dalekBattleActionChoice = daleckToBattle.GetBattleAction();
+
+                if (travelerBattleActionChoice == BattleAction.Retreat
+                        && dalekBattleActionChoice == BattleAction.Retreat)
+                {
+                    battleResult = BattleResult.BothRetreat;
+                }
+                else if (travelerBattleActionChoice == BattleAction.Attack
+                            && dalekBattleActionChoice == BattleAction.Retreat)
+                {
+                    battleResult = BattleResult.NPCRetreats;
+                }
+                else if (travelerBattleActionChoice == BattleAction.Retreat
+                            && dalekBattleActionChoice == BattleAction.Attack)
+                {
+                    battleResult = BattleResult.TravelerRetreats;
+                }
+                else if (travelerBattleActionChoice == BattleAction.Attack
+                            && dalekBattleActionChoice == BattleAction.Attack)
+                {
+                    int travelerBattleNumber = random.Next(1, 100) * _gameTraveler.BattleIndex;
+                    int dalekBattleNumber = random.Next(1, 100) * daleckToBattle.BattleIndex;
+
+                    if (travelerBattleNumber > dalekBattleNumber)
+                    {
+                        battleResult = BattleResult.TravelerWins;
+                    }
+                    else
+                    {
+                        battleResult = BattleResult.NPCWins;
+                    }
+                }
+            }
+
+            ProcessBattleResult(battleResult, daleckToBattle);
+
+            return battleResult;
+        }
+
+        private void ProcessBattleResult(BattleResult battleResult, Dalek daleckToBattle)
+        {
+            switch (battleResult)
+            {
+                case BattleResult.TravelerWins:
+                    daleckToBattle.SpaceTimeLocationID = 0; // Daleck removed from game
+                    break;
+                case BattleResult.NPCWins:
+                    _gameTraveler.Lives--;
+                    break;
+                case BattleResult.TravelerRetreats:
+                case BattleResult.NPCRetreats:
+                case BattleResult.Draw:
+                case BattleResult.BothRetreat:
+                    break;
+                default:
+                    break;
+            }
         }
 
         #endregion
