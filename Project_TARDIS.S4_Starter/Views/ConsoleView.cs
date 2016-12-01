@@ -87,22 +87,6 @@ namespace Project_TARDIS
         }
 
         /// <summary>
-        /// display message indicating the traveler is out of lives
-        /// </summary>
-        public void DisplayOutOfLives()
-        {
-            ConsoleUtil.HeaderText = "Exit";
-            ConsoleUtil.DisplayReset();
-
-            Console.CursorVisible = false;
-
-            Console.WriteLine();
-            ConsoleUtil.DisplayMessage("It appears that you are out of lives in for this game. Pleaser return and play again.");
-
-            DisplayContinuePrompt();
-        }
-
-        /// <summary>
         /// display the welcome screen
         /// </summary>
         public void DisplayWelcomeScreen()

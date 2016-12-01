@@ -245,7 +245,6 @@ namespace Project_TARDIS
             //
             if (_gameTraveler.NoLives())
             {
-                _gameConsoleView.DisplayOutOfLives();
                 _gameConsoleView.DisplayExitPrompt();
             }
         }
